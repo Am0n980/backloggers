@@ -1,6 +1,7 @@
 import { useState } from 'react'
-import { supabase } from './supabaseClient'
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import SignUp from './pages/SignUp'
+import SignIn from './pages/SignIn'
 
 export default function App() {
   const [theme, setTheme] = useState('dark')
@@ -10,6 +11,12 @@ export default function App() {
   }
 
   return (
-    <SignUp theme={theme} onToggleTheme={toggleTheme} />
+    <BrowserRouter>
+      <Routes>
+        <Route path="/signup" element={<SignUp theme={theme} onToggleTheme={toggleTheme} />} />
+        <Route path="/signin" element={<SignIn theme={theme} onToggleTheme={toggleTheme} />} />
+        <Route path="*" element={<Navigate to="/signup" />} />
+      </Routes>
+    </BrowserRouter>
   )
 }
