@@ -6,13 +6,29 @@ export default function EmailConfirmation({ theme, onToggleTheme }) {
   const [status, setStatus] = useState('verifying')
 
   useEffect(() => {
-    supabase.auth.onAuthStateChange((event) => {
-      if (event === 'SIGNED_IN') {
+    supabase.auth.onAuthStateChange((event, session) => {
+      if (event === 'SIGNED_IN' && session) {
         setStatus('success')
-      } else {
-        setStatus('error')
       }
     })
+
+    const hashParams = new URLSearchParams(window.location.hash.substring(1))
+    const tokenHash = new URLSearchParams(window.location.search).get('token_hash')
+    const type = new URLSearchParams(window.location.search).get('type')
+
+    if (tokenHash && type) {
+      supabase.auth.verifyOtp({ token_hash: tokenHash, type }).then(({ error }) => {
+        if (error) {
+          setStatus('error')
+        } else {
+          setStatus('success')
+        }
+      })
+    } else if (hashParams.get('access_token')) {
+      setStatus('success')
+    } else {
+      setStatus('error')
+    }
   }, [])
 
   return (
@@ -31,8 +47,7 @@ export default function EmailConfirmation({ theme, onToggleTheme }) {
           <div>
             <h1 className="text-2xl font-medium mb-2">Email confirmed</h1>
             <p className="text-gray-400 text-sm mb-6">Your account is active. Let's set up your preferences.</p>
-            
-              <a href="/onboarding" className="inline-block px-6 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-medium text-sm transition-colors">Get started</a>
+            <a href="/onboarding" className="inline-block px-6 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-medium text-sm transition-colors">Get started</a>
           </div>
         )}
 
