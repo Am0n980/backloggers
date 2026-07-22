@@ -7,6 +7,7 @@ import EmailConfirmation from './pages/EmailConfirmation'
 import Onboarding from './pages/Onboarding'
 import Home from './pages/Home'
 import Library from './pages/Library'
+import Lists from './pages/Lists'
 
 export default function App() {
   const [theme, setTheme] = useState('dark')
@@ -45,6 +46,7 @@ export default function App() {
         <Route path="/onboarding" element={session ? <Onboarding theme={theme} onToggleTheme={toggleTheme} /> : <Navigate to="/signin" />} />
         <Route path="/home" element={session ? <Home theme={theme} /> : <Navigate to="/signin" />} />
         <Route path="/library" element={session ? <Library theme={theme} /> : <Navigate to="/signin" />} />
+        <Route path="/lists" element={session ? <Lists theme={theme} /> : <Navigate to="/signin" />} />
         <Route path="*" element={<Navigate to={session ? "/home" : "/signup"} />} />
       </Routes>
     </BrowserRouter>
