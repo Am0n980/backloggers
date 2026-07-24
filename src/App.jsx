@@ -8,6 +8,7 @@ import Onboarding from './pages/Onboarding'
 import Home from './pages/Home'
 import Library from './pages/Library'
 import Lists from './pages/Lists'
+import ListDetail from './pages/ListDetail'
 
 export default function App() {
   const [theme, setTheme] = useState('dark')
@@ -47,6 +48,7 @@ export default function App() {
         <Route path="/home" element={session ? <Home theme={theme} /> : <Navigate to="/signin" />} />
         <Route path="/library" element={session ? <Library theme={theme} /> : <Navigate to="/signin" />} />
         <Route path="/lists" element={session ? <Lists theme={theme} /> : <Navigate to="/signin" />} />
+        <Route path="/list/:id" element={session ? <ListDetail theme={theme} /> : <Navigate to="/signin" />} />
         <Route path="*" element={<Navigate to={session ? "/home" : "/signup"} />} />
       </Routes>
     </BrowserRouter>
