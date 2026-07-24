@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, Navigate, useNavigate } from 'react-router-dom'
 import { supabase } from './supabaseClient'
 import SignUp from './pages/SignUp'
 import SignIn from './pages/SignIn'
@@ -9,6 +9,7 @@ import Home from './pages/Home'
 import Library from './pages/Library'
 import Lists from './pages/Lists'
 import ListDetail from './pages/ListDetail'
+import Profile from './pages/Profile'
 
 export default function App() {
   const [theme, setTheme] = useState('dark')
@@ -49,8 +50,27 @@ export default function App() {
         <Route path="/library" element={session ? <Library theme={theme} /> : <Navigate to="/signin" />} />
         <Route path="/lists" element={session ? <Lists theme={theme} /> : <Navigate to="/signin" />} />
         <Route path="/list/:id" element={session ? <ListDetail theme={theme} /> : <Navigate to="/signin" />} />
+        <Route path="/profile/:username" element={session ? <Profile theme={theme} /> : <Navigate to="/signin" />} />
+        <Route path="/profile" element={session ? <ProfileRedirect /> : <Navigate to="/signin" />} />
         <Route path="*" element={<Navigate to={session ? "/home" : "/signup"} />} />
       </Routes>
     </BrowserRouter>
   )
+}
+
+function ProfileRedirect() {
+  const navigate = useNavigate()
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      supabase.from('users').select('username').eq('id', user.id).single().then(({ data }) => {
+        if (data) navigate(`/profile/${data.username}`, { replace: true })
+        setLoading(false)
+      })
+    })
+  }, [])
+
+  if (loading) return <div className="min-h-screen bg-gray-900 flex items-center justify-center"><p className="text-gray-400 text-sm">Loading...</p></div>
+  return null
 }
